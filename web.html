@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WebSocket Example</title>
+</head>
+<body>
+<h2>Registration</h2>
+<input type="text" id="registerName" placeholder="Enter your name">
+<input type="text" id="registerEmail" placeholder="Enter your email">
+<input type="password" id="registerPassword" placeholder="Enter your password">
+<button id="register">Register</button>
+
+<h2>Login</h2>
+<input type="text" id="loginEmail" placeholder="Enter your email">
+<input type="password" id="loginPassword" placeholder="Enter your password">
+<button id="login">Login</button>
+
+<h2>Chat</h2>
+<input type="text" id="name" placeholder="Enter your name">
+<button id="save">Save</button>
+<div id="messages"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  // listen for incoming messages from the server
+  socket.on('message', (msg) => {
+    const messages = document.getElementById('messages');
+    const li = document.createElement('li');
+    li.appendChild(document.createTextNode(msg));
+    messages.appendChild(li);
+  });
+
+  // save the name to the server
+  const saveButton = document.getElementById('save');
+  const nameInput = document.getElementById('name');
+  saveButton.addEventListener('click', () => {
+    const name = nameInput.value;
+    socket.emit('message', name);
+  });
+
+  // register a new user
+  const registerButton = document.getElementById('register');
+  const registerNameInput = document.getElementById('registerName');
+  const registerEmailInput = document.getElementById('registerEmail');
+  const registerPasswordInput = document.getElementById('registerPassword');
+  registerButton.addEventListener('click', () => {
+    const name = registerNameInput.value;
+    const email = registerEmailInput.value;
+    const password = registerPasswordInput.value;
+    socket.emit('register', { name, email, password });
+  });
+
+  // login as an existing user
+  const loginButton = document.getElementById('login');
+  const loginEmailInput = document.getElementById('loginEmail');
+  const loginPasswordInput = document.getElementById('loginPassword');
+  loginButton.addEventListener('click', () => {
+    const email = loginEmailInput.value;
+    const password = loginPasswordInput.value;
+    socket.emit('login', { email, password });
+  });
+</script>
+</body>
+</html>
